@@ -1,4 +1,5 @@
 import { allElementsData } from "../assets/data";
+import { elementSmilie } from "../assets/elementPoetry";
 
 const periodicTableSymbols = new Set([
     "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
@@ -46,18 +47,30 @@ const getElementArrayFromName = (name) => {
     return result;
 };
 
+
 export const detailedArr = (name) => {
     const elementsArr = [];
+    const personalityArr = []
     const elementList = getElementArrayFromName(name);
+    const existingPersonalities = new Set();
+    
+
 
     elementList.forEach(item => {
         const lowerCasedItem = item.toLowerCase();
         
+        
         if (periodicTableSymbols.has(item)) {
             const elementDetails = allElementsData.find(element => element.symbol.toLowerCase() === lowerCasedItem);
-            
+            const elemPoetry = elementSmilie.find(element => element.symbol.toLowerCase() === lowerCasedItem);
+
             if (elementDetails) {
                 elementsArr.push(elementDetails);
+                if (!existingPersonalities.has(item)){
+                    personalityArr.push(elemPoetry);
+                }
+                existingPersonalities.add(elemPoetry.symbol)
+
             } else {
                 elementsArr.push({ symbol: item, error: 'Details not found' }); // Handle missing element
             }
@@ -66,11 +79,6 @@ export const detailedArr = (name) => {
         }
     });
 
-    return elementsArr;
+    return [elementsArr, personalityArr];
 };
 
-
-// Example usage:
-const name = "Megan";
-const elementArray = getElementArrayFromName(name);
-console.log(elementArray);
