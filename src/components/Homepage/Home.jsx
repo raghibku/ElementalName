@@ -1,8 +1,12 @@
 import { useState } from "react"
 import { detailedArr } from "../../utilities/nameToEle"
+import React, { useCallback, useRef } from 'react';
+import { toPng } from 'html-to-image';
+
 
 
 const Home = () => {
+    const imgref = useRef()
 
     const [elementalizedNameArr, setElementalizedNameArr] = useState([])
     const [takeName, settakeName] = useState(true)
@@ -24,11 +28,27 @@ const Home = () => {
         setPersonality([])
         setElementalizedNameArr([])
     }
+    const onButtonClick = useCallback(() => {
+        if (imgref.current === null) {
+            return
+        }
+
+        toPng(imgref.current, { cacheBust: true, })
+            .then((dataUrl) => {
+                const link = document.createElement('a')
+                link.download = 'my-image-name.png'
+                link.href = dataUrl
+                link.click()
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [imgref])
     return (
         <div
             className="min-h-screen  text-white flex justify-center items-center z-0 bg-gradient-to-br from-slate-700 to-slate-800">
             {/* inner container */}
-            <div className="flex flex-col overflow-y-auto max-w-[776px] gap-4 md:gap-8 p-6 md:p-10 w-[90%] md:w-[70%]  justify-center items-center z-10 ">
+            <div ref={imgref} className="flex flex-col overflow-y-auto max-w-[776px] gap-4 md:gap-8 p-6 md:p-10 w-[90%] md:w-[70%]  justify-center items-center z-10 bg-gradient-to-br from-slate-700 to-slate-800 ">
                 {/* input name */}
                 {
                     takeName ?
@@ -44,7 +64,10 @@ const Home = () => {
                             </label>
                         </form>
                         :
-                        <button className="px-8 py-4 rounded-md bg-cyan-500" onClick={handleTryAgain}>Try Again!</button>
+                        <div className="flex justify-center items-center gap-2">
+                            <button className="px-8 py-4 rounded-md bg-cyan-500" onClick={handleTryAgain}>Try Again!</button>
+                            <button className="px-8 py-4 rounded-md bg-cyan-500" onClick={onButtonClick}>Generate Image</button>
+                        </div>
                 }
 
                 {/* output */}
@@ -74,10 +97,10 @@ const Home = () => {
                 </div>
                 <div className="">
                     {
-                        personality.length>0 ? <div>
+                        personality.length > 0 ? <div>
                             <h1 className="text-lg font-semibold text-cyan-500">Your Personality Traits by Name Elements: </h1>
                             {personality.map((item, index) => <p key={index}><span className="text-cyan-400">{item.element} - </span>  {item.person_element_smilie}</p>)}
-                        </div>:<></>
+                        </div> : <></>
                     }
                 </div>
 
