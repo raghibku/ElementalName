@@ -72,7 +72,7 @@ const Home = () => {
 
                 {/* output */}
                 <div className="w-full flex justify-center items-center ">
-                    <div className="flex gap-2 overflow-x-scroll">
+                    <div className="flex gap-2 overflow-x-auto">
                         {
                             elementalizedNameArr &&
                             elementalizedNameArr.map((element) =>
